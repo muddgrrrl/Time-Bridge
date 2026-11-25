@@ -35,11 +35,13 @@ def main():
             instant = localize(instant, ZoneInfo(args.source or "UTC"), args.fold)
         elif args.source is not None or args.fold is not None:
             raise ValueError("an offset timestamp already identifies an instant")
+        results = []
         for name in args.zones:
             target = instant.astimezone(ZoneInfo(name))
-            print(f"{name:<25} {target.isoformat(sep=' ')}  {target.tzname()}")
-    except (ValueError, ZoneInfoNotFoundError) as error:
+            results.append(f"{name:<25} {target.isoformat(sep=' ')}  {target.tzname()}")
+    except (ValueError, OverflowError, ZoneInfoNotFoundError) as error:
         parser.error(str(error))
+    print("\n".join(results))
 
 
 if __name__ == "__main__":
